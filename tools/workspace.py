@@ -5,29 +5,31 @@ Context Workbench — create engagement folders from blueprints, or sync latest 
 Reads registry.json from the repository root (parent of tools/), not from tools/ — it is the
 catalog for the whole repo next to BLUEPRINTS/.
 
-Parallel CLIs (same commands, no Python): tools/new-workspace.sh (Bash + jq),
-tools/new-workspace.ps1 (Windows PowerShell 5.1+). Prefer Python when you extend logic in one place.
+Parallel CLIs (same commands, no Python): tools/workspace.sh (Bash + jq),
+tools/workspace.ps1 (Windows PowerShell 5.1+). Prefer Python when you extend logic in one place.
 
-Create (named flags — robust; omit --blueprint for default):
-  python tools/new_workspace.py create --name="Olive Grove"
-  python tools/new_workspace.py create --blueprint=presales --name=olive-grove
-  python tools/new_workspace.py create -b presales -n "Olive Grove" --parent ./engagements
+One-argument create "Client" uses the default (generic) workbench. For another built-in style: --blueprint=<id> --name "..." (run "create --help" for ids from registry.json).
 
-Create (positional — same as before; relative paths use --parent, default PROJECTS/):
-  python tools/new_workspace.py create "Acme Corporation"
-  python tools/new_workspace.py create presales "Acme Corporation"
-  python tools/new_workspace.py create ./my-folder
-  python tools/new_workspace.py create presales ./engagements/custom-name
+Create (named flags; omit --blueprint for default):
+  python tools/workspace.py create --name="Acme Build"
+  python tools/workspace.py create --blueprint=technical-architect --name=acme-build
+  python tools/workspace.py create -b technical-architect -n "Acme Build" --parent ./engagements
+
+Create (positional — same as before; relative paths use --parent, default WORKSPACES/):
+  python tools/workspace.py create "Acme Corporation"
+  python tools/workspace.py create technical-architect "Acme Corporation"
+  python tools/workspace.py create ./my-folder
+  python tools/workspace.py create technical-architect ./engagements/custom-name
 
 Create (--path for explicit folder):
-  python tools/new_workspace.py create --path=./engagements/olive
-  python tools/new_workspace.py create -b presales --path ./engagements/olive
+  python tools/workspace.py create --path=./engagements/acme
+  python tools/workspace.py create -b technical-architect --path ./engagements/acme
 
 Each new workspace gets WORKBENCH.json (blueprint id/version, client slug, timestamps) for sync.
 
 Sync:
-  python tools/new_workspace.py sync ./presales_acmecorpor
-  python tools/new_workspace.py sync presales ./some/path   # legacy: blueprint + path
+  python tools/workspace.py sync ./technical-architect_acmecorpor
+  python tools/workspace.py sync technical-architect ./some/path   # legacy: blueprint + path
 
 Blueprint metadata: _shared carries a stub; each overlay’s metadata.json lands in the workspace root (last wins).
 """
@@ -46,7 +48,7 @@ from pathlib import Path
 WORKBENCH_FILENAME = "WORKBENCH.json"
 MAX_CLIENT_SLUG_LEN = 10
 # Default parent for `create` (under the context-bench repo root).
-DEFAULT_PROJECTS_DIR = "PROJECTS"
+DEFAULT_WORKSPACES_DIR = "WORKSPACES"
 DEFAULT_BLUEPRINT_ID = "default"
 
 
@@ -192,7 +194,7 @@ def write_workbench_with_repo(
         "paths": {"directory_name": directory_name},
         "registry": {"version": registry.get("version", 1)},
         "created_utc": datetime.now(timezone.utc).isoformat(),
-        "generator": {"tool": "tools/new_workspace.py", "kind": "create"},
+        "generator": {"tool": "tools/workspace.py", "kind": "create"},
     }
     (target / WORKBENCH_FILENAME).write_text(
         json.dumps(doc, indent=2, ensure_ascii=False) + "\n",
@@ -271,9 +273,9 @@ def parse_create_positional(registry: dict, positional: list[str]) -> tuple[str,
     sys.stderr.write(
         "create: expected one or two positional arguments, or use --name / --path:\n"
         f'  create "Client or path"                    # blueprint: {DEFAULT_BLUEPRINT_ID}\n'
-        '  create presales "Client or path"\n'
+        '  create technical-architect "Client or path"\n'
         f'  create --name "Client" [--blueprint {DEFAULT_BLUEPRINT_ID}]\n'
-        "  create --path ./folder [--blueprint presales]\n"
+        "  create --path ./folder [--blueprint technical-architect]\n"
     )
     sys.exit(1)
 
@@ -323,9 +325,9 @@ def resolve_create_blueprint_and_target(registry: dict, args: argparse.Namespace
 
     sys.stderr.write(
         "create: missing target. Examples:\n"
-        f'  create --name "Olive Grove"\n'
-        "  create --blueprint=presales --name=olive-grove\n"
-        "  create --path ./engagements/olive\n"
+        f'  create --name "Acme Build"\n'
+        "  create --blueprint=technical-architect --name=acme-build\n"
+        "  create --path ./engagements/acme\n"
         f'  create "Acme"   # shorthand for default blueprint + name\n'
     )
     sys.exit(1)
@@ -336,7 +338,7 @@ def cmd_create(args: argparse.Namespace, repo: Path, registry: dict) -> None:
     if args.parent is not None:
         parent = Path(args.parent).expanduser().resolve()
     else:
-        parent = (repo / DEFAULT_PROJECTS_DIR).resolve()
+        parent = (repo / DEFAULT_WORKSPACES_DIR).resolve()
     parent.mkdir(parents=True, exist_ok=True)
     target, client_display, client_slug, dir_name = resolve_create_target(
         parent, blueprint_id, name_or_path
@@ -434,6 +436,7 @@ def main() -> None:
     script = Path(__file__)
     repo = repo_root(script)
     registry = load_registry(repo)
+    blueprint_ids_pipe = "|".join((registry.get("blueprints") or {}).keys())
 
     parser = argparse.ArgumentParser(
         description="Context Workbench: create workspaces from blueprints or sync updates."
@@ -445,14 +448,21 @@ def main() -> None:
 
     p_create = sub.add_parser(
         "create",
-        help=f'New workspace. Use --name/--path + optional --blueprint (default blueprint: {DEFAULT_BLUEPRINT_ID}), or positional form.',
+        help=(
+            f"New workspace. Positional: one arg -> blueprint {DEFAULT_BLUEPRINT_ID} (generic template); "
+            f"two args -> BLUEPRINT then name/path. Flags: --name with optional --blueprint "
+            f"(ids: {blueprint_ids_pipe})."
+        ),
     )
     p_create.add_argument(
         "--blueprint",
         "-b",
         default=None,
         metavar="ID",
-        help=f"Blueprint id when using --name or --path (default: {DEFAULT_BLUEPRINT_ID} if omitted)",
+        help=(
+            f"Blueprint when using --name or --path only; ids: {blueprint_ids_pipe} "
+            f"(omit for {DEFAULT_BLUEPRINT_ID})"
+        ),
     )
     mx = p_create.add_mutually_exclusive_group(required=False)
     mx.add_argument(
@@ -474,14 +484,17 @@ def main() -> None:
         "positional",
         nargs="*",
         metavar="ARG",
-        help=f"Alternative to --name/--path: one arg (uses {DEFAULT_BLUEPRINT_ID}) or two (BLUEPRINT then name/path)",
+        help=(
+            f"Alternative to --name/--path: one arg -> {DEFAULT_BLUEPRINT_ID} + generic template; "
+            f"two args -> blueprint id then name/path"
+        ),
     )
     p_create.add_argument(
         "--parent",
         "-p",
         default=None,
         metavar="DIR",
-        help=f"Parent for new workspaces (default: <repo>/{DEFAULT_PROJECTS_DIR})",
+        help=f"Parent for new workspaces (default: <repo>/{DEFAULT_WORKSPACES_DIR})",
     )
     p_create.add_argument("--no-reset", action="store_true", help="Do not empty volatile dirs")
     p_create.add_argument("--git", action="store_true", help="Run git init in the new folder")

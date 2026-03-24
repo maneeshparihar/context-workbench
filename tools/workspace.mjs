@@ -3,8 +3,8 @@
  * Spawn a fresh Context Workbench from registry.json blueprints.
  *
  * Usage:
- *   node tools/new-workspace.mjs --list
- *   node tools/new-workspace.mjs <blueprint-id> <target-directory> [--no-reset] [--git]
+ *   node tools/workspace.mjs --list
+ *   node tools/workspace.mjs <blueprint-id> <target-directory> [--no-reset] [--git]
  *
  * Run from the context-bench repository root (directory that contains registry.json).
  */
@@ -26,8 +26,8 @@ function loadRegistry() {
 function usage(msg) {
   if (msg) console.error(msg + "\n");
   console.error(`Usage:
-  node tools/new-workspace.mjs --list
-  node tools/new-workspace.mjs <blueprint-id> <target-directory> [--no-reset] [--git]
+  node tools/workspace.mjs --list
+  node tools/workspace.mjs <blueprint-id> <target-directory> [--no-reset] [--git]
 
 Options:
   --no-reset   Copy blueprint as-is (do not empty INPUTS, TASK-DEFINITIONS, WIP, DELIVERABLES).

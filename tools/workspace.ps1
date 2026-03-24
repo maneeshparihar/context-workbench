@@ -2,13 +2,13 @@
 <#
 .SYNOPSIS
   Context Workbench — native PowerShell implementation (no Python).
-  Same commands as: python tools/new_workspace.py ...
+  Same commands as: python tools/workspace.py ...
 
 .EXAMPLE
-  ./tools/new-workspace.ps1 list
-  ./tools/new-workspace.ps1 create "Acme Corporation"
-  ./tools/new-workspace.ps1 create presales "Acme Corporation"
-  ./tools/new-workspace.ps1 sync ./PROJECTS/default_acme
+  ./tools/workspace.ps1 list
+  ./tools/workspace.ps1 create "Acme Corporation"
+  ./tools/workspace.ps1 create technical-architect "Acme Corporation"
+  ./tools/workspace.ps1 sync ./WORKSPACES/default_acme
 #>
 $ErrorActionPreference = "Stop"
 
@@ -17,7 +17,7 @@ $RepoRoot = (Resolve-Path (Join-Path $ScriptRoot "..")).Path
 $RegistryPath = Join-Path $RepoRoot "registry.json"
 $WorkbenchName = "WORKBENCH.json"
 $MaxSlugLen = 10
-$DefaultProjects = "PROJECTS"
+$DefaultWorkspaces = "WORKSPACES"
 $DefaultBp = "default"
 
 function Die([string]$Msg) {
@@ -140,7 +140,7 @@ function Write-WorkbenchJson(
         paths          = [ordered]@{ directory_name = $DirName }
         registry       = [ordered]@{ version = $regVer }
         created_utc    = $created
-        generator      = [ordered]@{ tool = "tools/new-workspace.ps1"; kind = "create" }
+        generator      = [ordered]@{ tool = "tools/workspace.ps1"; kind = "create" }
     }
     $json = $doc | ConvertTo-Json -Depth 10
     Set-Content -LiteralPath (Join-Path $Target $WorkbenchName) -Value $json -Encoding UTF8
@@ -204,7 +204,7 @@ function Invoke-Create {
         New-Item -ItemType Directory -Path $expanded -Force | Out-Null
         $parent = (Resolve-Path -LiteralPath $expanded).Path
     } else {
-        $parent = Join-Path $RepoRoot $DefaultProjects
+        $parent = Join-Path $RepoRoot $DefaultWorkspaces
         New-Item -ItemType Directory -Path $parent -Force | Out-Null
         $parent = (Resolve-Path $parent).Path
     }
@@ -224,7 +224,7 @@ function Invoke-Create {
             Die "unknown blueprint `"$bid`". Use: list"
         }
     } else {
-        Die "create: expected 1 or 2 arguments after options:`n  create `"Client or path`"`n  create presales `"Client or path`""
+        Die "create: expected 1 or 2 arguments after options:`n  create `"Client or path`"`n  create technical-architect `"Client or path`""
     }
 
     $target = $null

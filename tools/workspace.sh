@@ -4,12 +4,12 @@
 # Requires: bash 4+, jq, standard Unix tools (find, cp, date).
 #
 # Usage:
-#   ./tools/new-workspace.sh list
-#   ./tools/new-workspace.sh create "Acme Corporation"
-#   ./tools/new-workspace.sh create presales "Acme Corporation"
-#   ./tools/new-workspace.sh create --parent /tmp/foo "Acme"
-#   ./tools/new-workspace.sh sync ./PROJECTS/default_acme
-#   ./tools/new-workspace.sh sync presales ./path/to/ws
+#   ./tools/workspace.sh list
+#   ./tools/workspace.sh create "Acme Corporation"
+#   ./tools/workspace.sh create technical-architect "Acme Corporation"
+#   ./tools/workspace.sh create --parent /tmp/foo "Acme"
+#   ./tools/workspace.sh sync ./WORKSPACES/default_acme
+#   ./tools/workspace.sh sync technical-architect ./path/to/ws
 #
 set -euo pipefail
 
@@ -18,7 +18,7 @@ REPO="$(cd "$SCRIPT_DIR/.." && pwd)"
 REGISTRY="$REPO/registry.json"
 WORKBENCH_NAME="WORKBENCH.json"
 MAX_SLUG_LEN=10
-DEFAULT_PROJECTS="PROJECTS"
+DEFAULT_WORKSPACES="WORKSPACES"
 DEFAULT_BP="default"
 
 die() { echo "context-bench: $*" >&2; exit 1; }
@@ -29,7 +29,7 @@ need_jq() {
 
 to_lower() { printf '%s' "$1" | tr '[:upper:]' '[:lower:]'; }
 
-# Alnum-only slug, max length (matches new_workspace.py)
+# Alnum-only slug, max length (matches workspace.py)
 normalize_slug() {
   local s
   s=$(to_lower "$1")
@@ -147,7 +147,7 @@ write_workbench() {
         paths: { directory_name: $dn },
         registry: { version: $rv },
         created_utc: $ts,
-        generator: { tool: "tools/new-workspace.sh", kind: "create" }
+        generator: { tool: "tools/workspace.sh", kind: "create" }
       }' >"$target/$WORKBENCH_NAME"
   else
     jq -n \
@@ -165,7 +165,7 @@ write_workbench() {
         paths: { directory_name: $dn },
         registry: { version: $rv },
         created_utc: $ts,
-        generator: { tool: "tools/new-workspace.sh", kind: "create" }
+        generator: { tool: "tools/workspace.sh", kind: "create" }
       }' >"$target/$WORKBENCH_NAME"
   fi
 }
@@ -242,8 +242,8 @@ cmd_create() {
       parent="$(cd "$REPO" && cd "$raw" && pwd)" || die "bad --parent: $raw"
     fi
   else
-    mkdir -p "$REPO/$DEFAULT_PROJECTS"
-    parent="$(cd "$REPO/$DEFAULT_PROJECTS" && pwd)"
+    mkdir -p "$REPO/$DEFAULT_WORKSPACES"
+    parent="$(cd "$REPO/$DEFAULT_WORKSPACES" && pwd)"
   fi
 
   local pos=("$@")
@@ -259,7 +259,7 @@ cmd_create() {
   else
     die "create: expected 1 or 2 arguments after options:
   create \"Client or path\"
-  create presales \"Client or path\""
+  create technical-architect \"Client or path\""
   fi
 
   mkdir -p "$parent"
