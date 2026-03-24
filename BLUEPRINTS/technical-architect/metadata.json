@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "blueprint_id": "technical-architect",
+  "version": "1.0.0",
+  "label": "Technical architect (delivery)",
+  "description": "Solution shape, integrations, ADRs, and delivery-facing architecture artifacts.",
+  "role": "technical_architect",
+  "defaults": {
+    "system_prompts": ["SYSTEM-PROMPTS/technical-architect-prompt.md"]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "description": "Catalog of Context Workbench blueprints. Each new workspace copies BLUEPRINTS/_shared, then applies overlay folders in order.",
+  "sharedRoot": "BLUEPRINTS/_shared",
+  "resetDirectories": [
+    "INPUTS",
+    "TASK-DEFINITIONS",
+    "WORK-IN-PROGRESS",
+    "DELIVERABLES"
+  ],
+  "blueprints": {
+    "default": {
+      "label": "Default",
+      "description": "_shared base plus default generic system prompt; used when you omit the blueprint on create.",
+      "overlays": ["BLUEPRINTS/default"]
+    },
+    "presales": {
+      "label": "Pre-sales / solution architect",
+      "description": "_shared base plus pre-sales technical architect system prompt.",
+      "overlays": ["BLUEPRINTS/presales"]
+    },
+    "technical-architect": {
+      "label": "Technical architect (delivery)",
+      "description": "_shared base plus technical-architect system prompt; extend REFERENCES for your standards.",
+      "overlays": ["BLUEPRINTS/technical-architect"]
+    }
+  }
+}

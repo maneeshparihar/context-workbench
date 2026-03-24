@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "blueprint_id": "_shared",
+  "version": "0.0.0",
+  "label": "Context Workbench base (stub)",
+  "description": "Internal base layer only—not a creatable project type. Every real blueprint copies this first, then its overlay replaces this file with its own metadata.json. System prompts are supplied by each blueprint overlay (default carries generic-workbench-prompt.md).",
+  "role": "stub",
+  "defaults": {
+    "system_prompts": []
+  }
+}

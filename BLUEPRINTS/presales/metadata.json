@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "blueprint_id": "presales",
+  "version": "1.0.0",
+  "label": "Pre-sales / solution architect",
+  "description": "Pre-sales technical architect persona, estimates, workshops, and proposal-shaped outputs.",
+  "role": "presales_technical_architect",
+  "defaults": {
+    "system_prompts": ["SYSTEM-PROMPTS/presales-ai-architect-prompt.md"]
+  }
+}

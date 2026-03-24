@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "blueprint_id": "default",
+  "version": "1.0.0",
+  "label": "Default",
+  "description": "_shared base plus generic system prompt only (generic-workbench-prompt.md lives in this overlay, not in _shared).",
+  "role": "general",
+  "defaults": {
+    "system_prompts": ["SYSTEM-PROMPTS/generic-workbench-prompt.md"]
+  }
+}
