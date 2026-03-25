@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 #
 # Context Workbench — native shell implementation (no Python).
-# Requires: bash 4+, jq, standard Unix tools (find, cp, date).
+# Requires: bash 4+, jq (installed automatically on macOS/Linux when a supported tool is available),
+#   standard Unix tools (find, cp, date).
 #
 # Usage:
 #   ./tools/workspace.sh list
@@ -23,8 +24,71 @@ DEFAULT_BP="default"
 
 die() { echo "context-bench: $*" >&2; exit 1; }
 
+# Run a command as root if we are not already root (uses sudo when present).
+_run_priv() {
+  if [[ "$(id -u)" -eq 0 ]]; then
+    "$@"
+  elif command -v sudo >/dev/null 2>&1; then
+    sudo "$@"
+  else
+    echo "context-bench: need root or sudo to install jq" >&2
+    return 1
+  fi
+}
+
+# If jq is missing, try to install it (macOS: Homebrew; Linux: apt, dnf, yum, zypper, pacman, apk).
+ensure_jq() {
+  command -v jq >/dev/null 2>&1 && return 0
+
+  echo "context-bench: jq not found; trying to install it..." >&2
+  local os
+  os=$(uname -s 2>/dev/null || echo unknown)
+
+  case "$os" in
+    Darwin)
+      if command -v brew >/dev/null 2>&1; then
+        brew install jq
+      else
+        echo "context-bench: Homebrew not found. Install jq with: brew install jq" >&2
+        echo "context-bench: (Install Homebrew from https://brew.sh/ if needed.)" >&2
+        return 1
+      fi
+      ;;
+    Linux)
+      if command -v apt-get >/dev/null 2>&1; then
+        _run_priv apt-get update -qq && _run_priv apt-get install -y jq
+      elif command -v dnf >/dev/null 2>&1; then
+        _run_priv dnf install -y jq
+      elif command -v yum >/dev/null 2>&1; then
+        _run_priv yum install -y jq
+      elif command -v zypper >/dev/null 2>&1; then
+        _run_priv zypper install -y jq
+      elif command -v pacman >/dev/null 2>&1; then
+        _run_priv pacman -S --noconfirm jq
+      elif command -v apk >/dev/null 2>&1; then
+        if [[ "$(id -u)" -eq 0 ]]; then
+          apk add --no-cache jq
+        else
+          _run_priv apk add --no-cache jq
+        fi
+      else
+        echo "context-bench: no known package manager for this Linux system." >&2
+        echo "context-bench: Install jq manually: https://jqlang.github.io/jq/download/" >&2
+        return 1
+      fi
+      ;;
+    *)
+      echo "context-bench: automatic jq install is not set up for OS: $os" >&2
+      echo "context-bench: Install jq manually: https://jqlang.github.io/jq/download/" >&2
+      return 1
+      ;;
+  esac
+
+  command -v jq >/dev/null 2>&1
+}
+
 need_jq() {
-  command -v jq >/dev/null 2>&1 || die "jq is required (install: brew install jq / apt install jq)"
+  ensure_jq || die "jq is required but could not be installed automatically. See messages above or https://jqlang.github.io/jq/download/"
 }
 
 to_lower() { printf '%s' "$1" | tr '[:upper:]' '[:lower:]'; }
