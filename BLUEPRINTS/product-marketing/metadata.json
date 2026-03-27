@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "blueprint_id": "product-marketing",
+  "version": "1.0.0",
+  "label": "Product marketing (PMM)",
+  "description": "Positioning, launches, messaging hierarchies, and sales-enablement assets aligned to product and market reality.",
+  "role": "product_marketing",
+  "defaults": {
+    "system_prompts": ["SYSTEM-PROMPTS/product-marketing-prompt.md"]
+  }
+}

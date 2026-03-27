@@ -10,7 +10,7 @@ The first **`create`** line below makes a **default, generic** workbench (good f
 
 ```bash
 python tools/workspace.py create "Acme Corporation"
-python tools/workspace.py create --blueprint=technical-architect --name "Acme Corporation"  # other blueprints: default | presales | technical-architect
+python tools/workspace.py create --blueprint=technical-architect --name "Acme Corporation"  # see `python tools/workspace.py list` for all blueprint ids eg. presales | technical-architect | software-development | default
 python tools/workspace.py sync ./WORKSPACES/default_acmecorpor
 python tools/workspace.py list
 ```
@@ -30,7 +30,7 @@ From the **repository root**:
 ```bash
 chmod +x tools/workspace.sh    # Linux / Mac, first time only
 ./tools/workspace.sh create "Acme Corporation"
-./tools/workspace.sh create presales "Acme Corporation"  # other blueprints: default | presales | technical-architect
+./tools/workspace.sh create presales "Acme Corporation"  # run `./tools/workspace.sh list` for all ids
 ./tools/workspace.sh sync ./WORKSPACES/default_acmecorpor
 ./tools/workspace.sh list
 ```
@@ -47,7 +47,7 @@ From the **repository root**:
 
 ```powershell
 .\tools\workspace.ps1 create "Acme Corporation"
-.\tools\workspace.ps1 create presales "Acme Corporation"  # other blueprints: default | presales | technical-architect
+.\tools\workspace.ps1 create presales "Acme Corporation"  # run `.\tools\workspace.ps1 list` for all ids
 .\tools\workspace.ps1 sync .\WORKSPACES\default_acmecorpor
 .\tools\workspace.ps1 list
 ```

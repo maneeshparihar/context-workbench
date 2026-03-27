@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "blueprint_id": "enterprise-sales",
+  "version": "1.0.0",
+  "label": "Enterprise sales (B2B)",
+  "description": "Account executives and sales leaders: discovery, deal strategy, pipeline hygiene, and buyer-ready narratives.",
+  "role": "enterprise_sales",
+  "defaults": {
+    "system_prompts": ["SYSTEM-PROMPTS/enterprise-sales-prompt.md"]
+  }
+}

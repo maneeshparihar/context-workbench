@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "blueprint_id": "software-development",
+  "version": "1.0.0",
+  "label": "Software development",
+  "description": "Hands-on engineering: implementation, tests, reviews, and debugging grounded in repo and task context.",
+  "role": "software_developer",
+  "defaults": {
+    "system_prompts": ["SYSTEM-PROMPTS/software-development-prompt.md"]
+  }
+}

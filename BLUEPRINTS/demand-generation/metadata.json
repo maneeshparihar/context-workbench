@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "blueprint_id": "demand-generation",
+  "version": "1.0.0",
+  "label": "Demand generation (marketing)",
+  "description": "Campaigns, ICP, funnel and channel planning, content briefs, and measurable GTM experiments.",
+  "role": "demand_generation_marketing",
+  "defaults": {
+    "system_prompts": ["SYSTEM-PROMPTS/demand-generation-prompt.md"]
+  }
+}

@@ -33,7 +33,7 @@ From the repo root, the same patterns as the main **`README.md`**:
 
 ```bash
 python tools/workspace.py create "Acme Corporation"
-python tools/workspace.py create --blueprint=technical-architect --name "Acme Corporation"  # other blueprints: default | presales | technical-architect
+python tools/workspace.py create --blueprint=technical-architect --name "Acme Corporation"  # run `python tools/workspace.py list` for all ids
 python tools/workspace.py sync ./WORKSPACES/technical-architect_acmecorpor
 python tools/workspace.py list
 ```

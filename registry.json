@@ -23,6 +23,31 @@
       "label": "Technical architect (delivery)",
       "description": "_shared base plus technical-architect system prompt; extend REFERENCES for your standards.",
       "overlays": ["BLUEPRINTS/technical-architect"]
+    },
+    "enterprise-sales": {
+      "label": "Enterprise sales (B2B)",
+      "description": "_shared base plus enterprise-sales system prompt for discovery, deal strategy, and buyer-ready narratives.",
+      "overlays": ["BLUEPRINTS/enterprise-sales"]
+    },
+    "demand-generation": {
+      "label": "Demand generation (marketing)",
+      "description": "_shared base plus demand-generation system prompt for campaigns, ICP, and measurable GTM work.",
+      "overlays": ["BLUEPRINTS/demand-generation"]
+    },
+    "strategic-leadership": {
+      "label": "Strategic leadership",
+      "description": "_shared base plus strategic-leadership system prompt for priorities, OKRs, and executive communication.",
+      "overlays": ["BLUEPRINTS/strategic-leadership"]
+    },
+    "product-marketing": {
+      "label": "Product marketing (PMM)",
+      "description": "_shared base plus product-marketing system prompt for positioning, launches, and sales enablement.",
+      "overlays": ["BLUEPRINTS/product-marketing"]
+    },
+    "software-development": {
+      "label": "Software development",
+      "description": "_shared base plus software-development system prompt for implementation, tests, and code-focused work.",
+      "overlays": ["BLUEPRINTS/software-development"]
     }
   }
 }

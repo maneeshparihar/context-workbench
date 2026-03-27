@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "blueprint_id": "strategic-leadership",
+  "version": "1.0.0",
+  "label": "Strategic leadership",
+  "description": "Executives and strategy leads: priorities, OKRs, board- and team-ready narratives, and tradeoff framing.",
+  "role": "strategic_leadership",
+  "defaults": {
+    "system_prompts": ["SYSTEM-PROMPTS/strategic-leadership-prompt.md"]
+  }
+}
